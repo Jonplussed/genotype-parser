@@ -1,11 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Parser.FastPhase
-  ( BasePair (..)
-  , Datum (..)
-  , Name (..)
-  , Genotype (..)
-  , parseGenotype
+module Genotype.Parser.FastPhase
+  ( parseGenotype
   , runParser
   ) where
 
@@ -18,7 +14,7 @@ import qualified Data.Attoparsec.Combinator as P
 import qualified Data.Attoparsec.Text as P
 import qualified Data.Char as C
 
-import Types
+import Genotype.Types
 
 parseName :: Parser Name
 parseName =

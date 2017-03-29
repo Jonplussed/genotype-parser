@@ -1,4 +1,4 @@
-module Types where
+module Genotype.Types where
 
 import Data.Text (Text)
 
@@ -16,11 +16,3 @@ data Genotype = Genotype
   , geno_subpopLabel :: Int
   , geno_datums :: [(Datum, Datum)]
   } deriving (Eq, Show)
-
-data ReferenceComparison
-  = BothMatch
-  | FirstMatch
-  | LastMatch
-  | NoMatch
-  | CannotCompare
-  deriving (Enum, Eq, Show)

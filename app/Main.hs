@@ -2,8 +2,8 @@
 
 module Main (main) where
 
-import qualified Parser.FastPhase as FastPhase
-import qualified Printer.Geno as Geno
+import qualified Genotype.Parser.FastPhase as FastPhase
+import qualified Genotype.Printer.Geno as Geno
 
 import qualified Data.Text.IO as T
 
