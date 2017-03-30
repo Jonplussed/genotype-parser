@@ -2,7 +2,8 @@ module Genotype.Printer.Geno
   ( print
   ) where
 
-import Data.Text (Text)
+import Control.Monad (forM_)
+import System.IO (putChar)
 
 import qualified Data.Text.IO as T
 
@@ -16,12 +17,13 @@ print = go . map geno_datums
     go datums =
       case headsTails datums of
         Just (heads, tails) -> do
-          T.putStrLn $ makeNextLine heads
+          printNextLine heads
+          putChar '\n'
           go tails
         Nothing -> return ()
 
-makeNextLine :: [(Datum, Datum)] -> Text
-makeNextLine datums = foldMap printer datums
+printNextLine :: [(Datum, Datum)] -> IO ()
+printNextLine datums =
+    forM_ datums $ T.putStr . printCompResult . compareToRef baseRef
   where
-    printer = printCompResult . compareToRef baseRef
     baseRef = firstCertain datums
