@@ -4,8 +4,12 @@ module Genotype.Comparison
   ( ReferenceComparison (..)
   , compareToRef
   , printCompResult
+  , headsTails
+  , firstCertain
   ) where
 
+import Control.Monad (sequence)
+import Data.Monoid ((<>))
 import Data.Text (Text)
 
 import Genotype.Types
@@ -47,3 +51,20 @@ printCompResult = \case
   LastMatch     -> "2"
   NoMatch       -> "3"
   CannotCompare -> "-9"
+
+headsTails :: [[a]] -> Maybe ([a],[[a]])
+headsTails ll = do
+  hts <- sequence $ map headTail ll
+  return (map fst hts, map snd hts)
+
+headTail :: [a] -> Maybe (a,[a])
+headTail (x:xs) = Just (x,xs)
+headTail _ = Nothing
+
+firstCertain :: [(Datum, Datum)] -> BasePair
+firstCertain (d:ds) =
+  case d of
+    ((Certain bp), _) -> bp
+    (_, (Certain bp)) -> bp
+    _ -> firstCertain ds
+firstCertain [] = error "can't find reference BasePair"

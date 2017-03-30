@@ -16,11 +16,13 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Genotype.Parser.FastPhase
+                     , Genotype.Printer.Arlequin
                      , Genotype.Printer.Geno
   other-modules:       Genotype.Comparison
                      , Genotype.Types
   build-depends:       base >= 4.7 && < 5
                      , attoparsec
+                     , formatting
                      , text
                      , vector
   default-language:    Haskell2010
@@ -32,6 +34,7 @@ executable geno-parser
   build-depends:       base
                      , attoparsec
                      , data-parser
+                     , optparse-applicative
                      , text
   default-language:    Haskell2010
 
