@@ -9,7 +9,6 @@ module Genotype.Comparison
   ) where
 
 import Control.Monad (sequence)
-import Data.Monoid ((<>))
 import Data.Text (Text)
 
 import Genotype.Types

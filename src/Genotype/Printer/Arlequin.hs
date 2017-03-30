@@ -1,8 +1,6 @@
 module Genotype.Printer.Arlequin where
 
 import Control.Monad (forM_)
-import Data.Monoid ((<>))
-import Data.Text (Text)
 import System.IO (putChar)
 
 import qualified Data.Text as T

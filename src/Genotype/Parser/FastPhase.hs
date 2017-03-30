@@ -73,7 +73,7 @@ parseGenotype =
 parseFile :: Parser [Genotype]
 parseFile =
   "genotypes file" `is` do
-    P.manyTill skipAny $ P.lookAhead start
+    _ <- P.manyTill skipAny $ P.lookAhead start
     _ <- start
     P.endOfLine
     genos <- P.sepBy parseGenotype P.endOfLine

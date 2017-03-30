@@ -3,7 +3,7 @@
 module Main (main) where
 
 import qualified Genotype.Parser.FastPhase as FastPhase
-import qualified Genotype.Printer.Geno as Geno
+-- import qualified Genotype.Printer.Geno as Geno
 import qualified Genotype.Printer.Arlequin as Arlequin
 
 import qualified Data.Text.IO as T
