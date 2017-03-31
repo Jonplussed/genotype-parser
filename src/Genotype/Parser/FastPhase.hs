@@ -43,12 +43,12 @@ parseBasePair =
       _   -> fail $ "invalid base pair: " <> [c]
 
 parseDatum :: Parser Datum
-parseDatum = "datum" `is` (parseCertain <|> parseUncertain)
+parseDatum = "datum" `is` (certain <|> estimated)
   where
-    parseCertain = do
+    certain = do
       p <- parseBasePair
       return $ Certain p
-    parseUncertain = do
+    estimated = do
       _ <- P.char '['
       p <- parseBasePair
       _ <- P.char ']'

@@ -3,27 +3,26 @@ module Genotype.Printer.Geno
   ) where
 
 import Control.Monad (forM_)
-import System.IO (putChar)
-
-import qualified Data.Text.IO as T
+import Data.Text.IO (hPutStr)
+import System.IO (Handle, hPutChar)
 
 import Genotype.Comparison
 import Genotype.Types
 import Prelude hiding (print)
 
-print :: [Genotype] -> IO ()
-print = go . map geno_datums
+print :: Handle -> [Genotype] -> IO ()
+print sink = go . map geno_datums
   where
     go datums =
       case headsTails datums of
         Just (heads, tails) -> do
-          printNextLine heads
-          putChar '\n'
+          printNextLine sink heads
+          hPutChar sink '\n'
           go tails
         Nothing -> return ()
 
-printNextLine :: [(Datum, Datum)] -> IO ()
-printNextLine datums =
-    forM_ datums $ T.putStr . printCompResult . compareToRef baseRef
+printNextLine :: Handle -> [(Datum, Datum)] -> IO ()
+printNextLine sink datums =
+    forM_ datums $ hPutStr sink . printCompResult . compareToRef baseRef
   where
     baseRef = firstCertain datums

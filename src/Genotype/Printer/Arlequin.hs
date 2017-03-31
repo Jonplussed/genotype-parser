@@ -1,36 +1,38 @@
-module Genotype.Printer.Arlequin where
+module Genotype.Printer.Arlequin
+  ( print
+  ) where
 
 import Control.Monad (forM_)
-import System.IO (putChar)
+import Data.Text.IO (hPutStr)
+import System.IO (Handle, hPutChar)
 
 import qualified Data.Text as T
-import qualified Data.Text.IO as T
 import qualified Data.Vector as V
 import qualified Data.Vector.Mutable as VM
 
 import Genotype.Comparison
 import Genotype.Types
-import Prelude hiding (head, print)
+import Prelude hiding (print)
 
-print :: [Genotype] -> IO ()
-print genos =
+print :: Handle -> [Genotype] -> IO ()
+print sink genos =
   forM_ genos $ \geno -> do
     let (Name name _) = geno_name geno
-    T.putStr $ name
-    putChar '\t'
-    T.putStr . T.pack . show $ geno_subpopLabel geno
-    putChar '\t'
-    printNextLine baseRefs $ geno_datums geno
-    putChar '\n'
+    hPutStr sink name
+    hPutChar sink '\t'
+    hPutStr sink . T.pack . show $ geno_subpopLabel geno
+    hPutChar sink '\t'
+    printNextLine sink baseRefs $ geno_datums geno
+    hPutChar sink '\n'
   where
     baseRefs = buildReferenceVector $ map geno_datums genos
 
-printNextLine :: V.Vector BasePair -> [(Datum, Datum)] -> IO ()
-printNextLine refs = go 0
+printNextLine :: Handle -> V.Vector BasePair -> [(Datum, Datum)] -> IO ()
+printNextLine sink refs = go 0
   where
     go _ [] = return ()
     go index (d:ds) = do
-      T.putStr . printCompResult $ compareToRef (refs V.! index) d
+      hPutStr sink . printCompResult $ compareToRef (refs V.! index) d
       go (succ index) ds
 
 -- | Prevent an O(n^2) operation from a `V.snoc` call per data column
