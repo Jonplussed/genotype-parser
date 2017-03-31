@@ -23,7 +23,7 @@ parseName =
     _  <- P.char '_'
     numbers <- P.takeWhile C.isDigit
     optChar <- P.option Nothing $ Just <$> P.satisfy C.isLower
-    return $ Name (letters <> "_" <> numbers) optChar
+    return $ Name letters numbers optChar
 
 parseSubpopLabel :: Parser Int
 parseSubpopLabel =

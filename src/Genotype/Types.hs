@@ -3,7 +3,8 @@ module Genotype.Types where
 import Data.Text (Text)
 
 data BasePair = C | T | A | G deriving (Eq, Show)
-data Name = Name Text (Maybe Char) deriving (Eq, Show)
+
+data Name = Name Text Text (Maybe Char) deriving (Eq, Show)
 
 data Datum
   = Missing

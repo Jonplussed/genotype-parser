@@ -17,8 +17,9 @@ import Prelude hiding (print)
 print :: Handle -> [Genotype] -> IO ()
 print sink genos =
   forM_ genos $ \geno -> do
-    let (Name name _) = geno_name geno
-    hPutStr sink name
+    let (Name letters numbers _) = geno_name geno
+    hPutStr sink letters
+    hPutStr sink numbers
     hPutChar sink '\t'
     hPutStr sink . T.pack . show $ geno_subpopLabel geno
     hPutChar sink '\t'
