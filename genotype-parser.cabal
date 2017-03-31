@@ -1,14 +1,11 @@
-name:                data-parser
+name:                genotype-parser
 version:             0.1.0.0
--- synopsis:
--- description:
-homepage:            https://github.com/githubuser/data-parser#readme
+homepage:            https://github.com/Jonplussed/genotype-parser
 license:             BSD3
 license-file:        LICENSE
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2017 Author name here
-category:            Web
+author:              Jonathan Childress
+copyright:           2017 Jonathan Childress
+category:            Science
 build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
@@ -18,6 +15,8 @@ library
   exposed-modules:     Genotype.Parser.FastPhase
                      , Genotype.Printer.Arlequin
                      , Genotype.Printer.Geno
+                     , Genotype.Processor
+                     , Genotype.Processor.KeepColumnNumbers
   other-modules:       Genotype.Comparison
                      , Genotype.Types
   ghc-options:         -Wall -Werror
@@ -27,23 +26,23 @@ library
                      , vector
   default-language:    Haskell2010
 
-executable geno-parser
+executable genotype-parser
   hs-source-dirs:      app
   main-is:             Main.hs
   ghc-options:         -Wall -Werror -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , attoparsec
-                     , data-parser
+                     , genotype-parser
                      , optparse-applicative
                      , text
   default-language:    Haskell2010
 
-test-suite data-parser-test
+test-suite genotype-parser-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
   build-depends:       base
-                     , data-parser
+                     , genotype-parser
                      , attoparsec
                      , interpolatedstring-perl6
                      , text
@@ -52,4 +51,4 @@ test-suite data-parser-test
 
 source-repository head
   type:     git
-  location: https://github.com/githubuser/data-parser
+  location: https://github.com/Jonplussed/genotype-parser

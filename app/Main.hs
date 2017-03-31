@@ -2,16 +2,18 @@
 
 module Main (main) where
 
-import Control.Applicative ((<**>), (<|>))
+import Control.Applicative ((<**>), (<|>), optional)
 import Data.Char (toLower)
 import Data.Semigroup ((<>))
 import System.IO (IOMode (WriteMode), stdout, openFile)
+import Genotype.Processor (Processor, preprocess)
 
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 import qualified Genotype.Parser.FastPhase as FastPhase
 import qualified Genotype.Printer.Arlequin as Arlequin
 import qualified Genotype.Printer.Geno as Geno
+import qualified Genotype.Processor.KeepColumnNumbers as KeepColumns
 import qualified Options.Applicative as O
 
 data InputFormat
@@ -85,7 +87,16 @@ data Options = Options
   , opt_inputSource :: InputSource
   , opt_outputFormat :: OutputFormat
   , opt_outputSource :: OutputSink
+  , opt_filterColumns :: Maybe T.Text
   } deriving (Eq, Show)
+
+parseFilterColumns :: O.Parser (Maybe T.Text)
+parseFilterColumns =
+  optional $ T.pack <$> O.strOption
+    (  O.long "keep-columns"
+    <> O.metavar "FILENAME"
+    <> O.help "File containing list of column numbers to keep"
+    )
 
 parseOptions :: O.Parser Options
 parseOptions =
@@ -94,6 +105,7 @@ parseOptions =
     <*> parseInputSource
     <*> parseOutputFormat
     <*> parseOutputSink
+    <*> parseFilterColumns
 
 parseOptionsWithInfo :: O.ParserInfo Options
 parseOptionsWithInfo =
@@ -110,9 +122,13 @@ main = do
     STDIN -> T.getContents
   parsed <- either fail return $ case opt_inputFormat opts of
     FastPhase -> FastPhase.runParser input
+  processed <- preprocess parsed $ preprocessors opts
   sink <- case opt_outputSource opts of
     OutputFile file -> openFile (T.unpack file) WriteMode
     STDOUT -> return stdout
   case opt_outputFormat opts of
-    Arlequin -> Arlequin.print sink parsed
-    Geno -> Geno.print sink parsed
+    Arlequin -> Arlequin.print sink processed
+    Geno -> Geno.print sink processed
+
+preprocessors :: Options -> [Processor]
+preprocessors = maybe [] (\f -> [KeepColumns.process f]) . opt_filterColumns
