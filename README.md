@@ -28,11 +28,19 @@ sudo apt-get update
 sudo apt-get install haskell-stack
 ```
 
-Next, clone this directory onto your local machine, `cd` into the directory,
+Next, clone this directory onto your local machine, either via:
+
+```
+git clone git@github.com:Jonplussed/genotype-parser.git
+```
+
+...or via the Github page download link, `cd` into the directory,
 and:
 
 ```
-stack init
+stack upgrade
+stack update
+stack setup
 stack build
 ```
 
