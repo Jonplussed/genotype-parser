@@ -51,7 +51,7 @@ Now, genotype-parser is ready to use!
 Example:
 
 ```
-stack exec -- geno-parser \
+stack exec -- genotype-parser \
   --input-format=fastphase \
   --input-file="my_work/fastphase_genotypes.out" \
   --output-format=geno \
@@ -62,5 +62,5 @@ stack exec -- geno-parser \
 For descriptions of the command-line flags, use:
 
 ```
-stack exec -- geno-parser --help
+stack exec -- genotype-parser --help
 ```
