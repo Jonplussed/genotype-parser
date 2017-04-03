@@ -38,10 +38,10 @@ git clone git@github.com:Jonplussed/genotype-parser.git
 and:
 
 ```
-stack upgrade
 stack update
 stack setup
 stack build
+stack install
 ```
 
 Now, genotype-parser is ready to use!
@@ -51,7 +51,7 @@ Now, genotype-parser is ready to use!
 Example:
 
 ```
-stack exec -- genotype-parser \
+genotype-parser \
   --input-format=fastphase \
   --input-file="my_work/fastphase_genotypes.out" \
   --output-format=geno \
@@ -62,5 +62,5 @@ stack exec -- genotype-parser \
 For descriptions of the command-line flags, use:
 
 ```
-stack exec -- genotype-parser --help
+genotype-parser --help
 ```
