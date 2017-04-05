@@ -6,6 +6,7 @@ import Control.Applicative ((<**>), (<|>), optional)
 import Data.Char (toLower)
 import Data.Semigroup ((<>))
 import System.IO (IOMode (WriteMode), stdout, openFile)
+import Genotype.Comparison (MatchType (..))
 import Genotype.Processor (Processor, preprocess)
 
 import qualified Data.Text as T
@@ -82,14 +83,6 @@ parseOutputSinkFile =
 parseOutputSink :: O.Parser OutputSink
 parseOutputSink = parseOutputSinkFile <|> pure STDOUT
 
-data Options = Options
-  { opt_inputFormat :: InputFormat
-  , opt_inputSource :: InputSource
-  , opt_outputFormat :: OutputFormat
-  , opt_outputSource :: OutputSink
-  , opt_filterColumns :: Maybe T.Text
-  } deriving (Eq, Show)
-
 parseFilterColumns :: O.Parser (Maybe T.Text)
 parseFilterColumns =
   optional $ T.pack <$> O.strOption
@@ -97,6 +90,22 @@ parseFilterColumns =
     <> O.metavar "FILENAME"
     <> O.help "File containing list of column numbers to keep"
     )
+
+parseMatchType :: O.Parser MatchType
+parseMatchType =
+  O.flag SameMatches DiffMatches
+    (  O.long "diff-matches"
+    <> O.help "Differentiate between column matches when printing ouput"
+    )
+
+data Options = Options
+  { opt_inputFormat :: InputFormat
+  , opt_inputSource :: InputSource
+  , opt_outputFormat :: OutputFormat
+  , opt_outputSink :: OutputSink
+  , opt_filterColumns :: Maybe T.Text
+  , opt_matchType :: MatchType
+  } deriving (Eq, Show)
 
 parseOptions :: O.Parser Options
 parseOptions =
@@ -106,6 +115,7 @@ parseOptions =
     <*> parseOutputFormat
     <*> parseOutputSink
     <*> parseFilterColumns
+    <*> parseMatchType
 
 parseOptionsWithInfo :: O.ParserInfo Options
 parseOptionsWithInfo =
@@ -123,12 +133,12 @@ main = do
   parsed <- either fail return $ case opt_inputFormat opts of
     FastPhase -> FastPhase.runParser input
   processed <- preprocess parsed $ preprocessors opts
-  sink <- case opt_outputSource opts of
+  sink <- case opt_outputSink opts of
     OutputFile file -> openFile (T.unpack file) WriteMode
     STDOUT -> return stdout
   case opt_outputFormat opts of
-    Arlequin -> Arlequin.print sink processed
-    Geno -> Geno.print sink processed
+    Arlequin -> Arlequin.print (opt_matchType opts) sink processed
+    Geno -> Geno.print (opt_matchType opts) sink processed
 
 preprocessors :: Options -> [Processor]
 preprocessors = maybe [] (\f -> [KeepColumns.process f]) . opt_filterColumns

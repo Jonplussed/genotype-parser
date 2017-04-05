@@ -2,6 +2,7 @@
 
 module Genotype.Comparison
   ( ReferenceComparison (..)
+  , MatchType (..)
   , compareToRef
   , printCompResult
   , headsTails
@@ -19,7 +20,12 @@ data ReferenceComparison
   | LastMatch
   | NoMatch
   | CannotCompare
-  deriving (Enum, Eq, Show)
+  deriving (Eq, Show)
+
+data MatchType
+  = DiffMatches
+  | SameMatches
+  deriving (Eq, Show)
 
 compareToRef :: BasePair -> (Datum, Datum) -> ReferenceComparison
 compareToRef ref datums =
@@ -43,12 +49,18 @@ getBasePairs (d1,d2) = do
   bp2 <- getBasePair d2
   return (bp1,bp2)
 
-printCompResult :: ReferenceComparison -> Text
-printCompResult = \case
+printCompResult :: MatchType -> ReferenceComparison -> Text
+printCompResult DiffMatches = \case
   BothMatch     -> "0"
   FirstMatch    -> "1"
   LastMatch     -> "2"
   NoMatch       -> "3"
+  CannotCompare -> "-9"
+printCompResult SameMatches = \case
+  BothMatch     -> "0"
+  FirstMatch    -> "1"
+  LastMatch     -> "1"
+  NoMatch       -> "2"
   CannotCompare -> "-9"
 
 headsTails :: [[a]] -> Maybe ([a],[[a]])

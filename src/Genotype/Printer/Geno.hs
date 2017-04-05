@@ -10,19 +10,19 @@ import Genotype.Comparison
 import Genotype.Types
 import Prelude hiding (print)
 
-print :: Handle -> [Genotype] -> IO ()
-print sink = go . map geno_datums
+print :: MatchType -> Handle -> [Genotype] -> IO ()
+print mtype sink = go . map geno_datums
   where
     go datums =
       case headsTails datums of
         Just (heads, tails) -> do
-          printNextLine sink heads
+          printNextLine mtype sink heads
           hPutChar sink '\n'
           go tails
         Nothing -> return ()
 
-printNextLine :: Handle -> [(Datum, Datum)] -> IO ()
-printNextLine sink datums =
-    forM_ datums $ hPutStr sink . printCompResult . compareToRef baseRef
+printNextLine :: MatchType -> Handle -> [(Datum, Datum)] -> IO ()
+printNextLine mtype sink datums =
+    forM_ datums $ hPutStr sink . printCompResult mtype . compareToRef baseRef
   where
     baseRef = firstCertain datums

@@ -12,13 +12,13 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Genotype.Parser.FastPhase
+  exposed-modules:     Genotype.Comparison
+                     , Genotype.Parser.FastPhase
                      , Genotype.Printer.Arlequin
                      , Genotype.Printer.Geno
                      , Genotype.Processor
                      , Genotype.Processor.KeepColumnNumbers
-  other-modules:       Genotype.Comparison
-                     , Genotype.Types
+  other-modules:       Genotype.Types
   ghc-options:         -Wall -Werror
   build-depends:       base >= 4.7 && < 5
                      , attoparsec
