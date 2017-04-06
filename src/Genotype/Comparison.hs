@@ -2,7 +2,7 @@
 
 module Genotype.Comparison
   ( ReferenceComparison (..)
-  , MatchType (..)
+  , PhaseKnowledge (..)
   , compareToRef
   , printCompResult
   , headsTails
@@ -22,9 +22,9 @@ data ReferenceComparison
   | CannotCompare
   deriving (Eq, Show)
 
-data MatchType
-  = DiffMatches
-  | SameMatches
+data PhaseKnowledge
+  = Known
+  | Unknown
   deriving (Eq, Show)
 
 compareToRef :: BasePair -> (Datum, Datum) -> ReferenceComparison
@@ -49,14 +49,14 @@ getBasePairs (d1,d2) = do
   bp2 <- getBasePair d2
   return (bp1,bp2)
 
-printCompResult :: MatchType -> ReferenceComparison -> Text
-printCompResult DiffMatches = \case
+printCompResult :: PhaseKnowledge -> ReferenceComparison -> Text
+printCompResult Known = \case
   BothMatch     -> "0"
   FirstMatch    -> "1"
   LastMatch     -> "2"
   NoMatch       -> "3"
   CannotCompare -> "-9"
-printCompResult SameMatches = \case
+printCompResult Unknown = \case
   BothMatch     -> "0"
   FirstMatch    -> "1"
   LastMatch     -> "1"

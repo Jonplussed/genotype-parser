@@ -14,8 +14,8 @@ import Genotype.Comparison
 import Genotype.Types
 import Prelude hiding (print)
 
-print :: MatchType -> Handle -> [Genotype] -> IO ()
-print mtype sink genos =
+print :: PhaseKnowledge -> Handle -> [Genotype] -> IO ()
+print phase sink genos =
   forM_ genos $ \geno -> do
     let (Name letters numbers _) = geno_name geno
     hPutStr sink letters
@@ -23,18 +23,18 @@ print mtype sink genos =
     hPutChar sink '\t'
     hPutStr sink . T.pack . show $ geno_subpopLabel geno
     hPutChar sink '\t'
-    printNextLine sink mtype baseRefs $ geno_datums geno
+    printNextLine sink phase baseRefs $ geno_datums geno
     hPutChar sink '\n'
   where
     baseRefs = buildReferenceVector $ map geno_datums genos
 
 printNextLine
-  :: Handle -> MatchType -> V.Vector BasePair -> [(Datum, Datum)] -> IO ()
-printNextLine sink mtype refs = go 0
+  :: Handle -> PhaseKnowledge -> V.Vector BasePair -> [(Datum, Datum)] -> IO ()
+printNextLine sink phase refs = go 0
   where
     go _ [] = return ()
     go index (d:ds) = do
-      hPutStr sink . printCompResult mtype $ compareToRef (refs V.! index) d
+      hPutStr sink . printCompResult phase $ compareToRef (refs V.! index) d
       go (succ index) ds
 
 -- | Prevent an O(n^2) operation from a `V.snoc` call per data column

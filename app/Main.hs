@@ -6,7 +6,7 @@ import Control.Applicative ((<**>), (<|>), optional)
 import Data.Char (toLower)
 import Data.Semigroup ((<>))
 import System.IO (IOMode (WriteMode), stdout, openFile)
-import Genotype.Comparison (MatchType (..))
+import Genotype.Comparison (PhaseKnowledge (..))
 import Genotype.Processor (Processor, preprocess)
 
 import qualified Data.Text as T
@@ -91,11 +91,11 @@ parseFilterColumns =
     <> O.help "File containing list of column numbers to keep"
     )
 
-parseMatchType :: O.Parser MatchType
-parseMatchType =
-  O.flag SameMatches DiffMatches
-    (  O.long "diff-matches"
-    <> O.help "Differentiate between column matches when printing ouput"
+parsePhaseKnown :: O.Parser PhaseKnowledge
+parsePhaseKnown =
+  O.flag Unknown Known
+    (  O.long "phase-known"
+    <> O.help "Differeniate between phases in comparison output"
     )
 
 data Options = Options
@@ -104,7 +104,7 @@ data Options = Options
   , opt_outputFormat :: OutputFormat
   , opt_outputSink :: OutputSink
   , opt_filterColumns :: Maybe T.Text
-  , opt_matchType :: MatchType
+  , opt_phaseKnown :: PhaseKnowledge
   } deriving (Eq, Show)
 
 parseOptions :: O.Parser Options
@@ -115,7 +115,7 @@ parseOptions =
     <*> parseOutputFormat
     <*> parseOutputSink
     <*> parseFilterColumns
-    <*> parseMatchType
+    <*> parsePhaseKnown
 
 parseOptionsWithInfo :: O.ParserInfo Options
 parseOptionsWithInfo =
@@ -137,8 +137,8 @@ main = do
     OutputFile file -> openFile (T.unpack file) WriteMode
     STDOUT -> return stdout
   case opt_outputFormat opts of
-    Arlequin -> Arlequin.print (opt_matchType opts) sink processed
-    Geno -> Geno.print (opt_matchType opts) sink processed
+    Arlequin -> Arlequin.print (opt_phaseKnown opts) sink processed
+    Geno -> Geno.print (opt_phaseKnown opts) sink processed
 
 preprocessors :: Options -> [Processor]
 preprocessors = maybe [] (\f -> [KeepColumns.process f]) . opt_filterColumns
